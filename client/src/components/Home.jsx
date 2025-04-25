@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Home(){
+function Home() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
-    const gotoAuctionRoom = ()=>{
+    const gotoAuctionRoom = () => {
         navigate('/auction');
     };
 
@@ -18,7 +18,37 @@ function Home(){
         setShowModal(false);
     };
 
-    return(
+/*     const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const formObject = Object.fromEntries(formData);
+
+        fetch('http://localhost:5004/auction/addAuctionForm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formObject)
+        }) */
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        fetch('http://localhost:5004/auction/addAuctionForm', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            closeAddAuctionModal();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    };
+
+    return (
         <div className="home">
             <h1>Welcome to home Page!</h1>
             <button className="btn btn-primary" onClick={gotoAuctionRoom}>Auction Room</button>
@@ -33,7 +63,7 @@ function Home(){
                                 <button type="button" className="btn-close" onClick={closeAddAuctionModal} aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
-                                <form>
+                                <form id='add_auction' onSubmit={handleSubmit}>
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="form-group">
@@ -68,12 +98,14 @@ function Home(){
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-primary">Submit</button>
+                                        <button type="button" className="btn btn-secondary" onClick={closeAddAuctionModal}>Close</button>
+                                    </div>
                                 </form>
                             </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-primary">Submit</button>
-                                <button type="button" className="btn btn-secondary" onClick={closeAddAuctionModal}>Close</button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
