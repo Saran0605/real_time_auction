@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bootstrap": "^5.3.5",
     "mongoose": "^8.13.3"
   }
 }
