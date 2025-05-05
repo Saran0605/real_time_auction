@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createAuction} = require('../Controller/auction');
+const {createAuction,getAllAuctions} = require('../Controller/auction');
 router.post('/addAuctionForm', async (req, res) => {
     console.log({ body: req.body });
 
@@ -26,7 +26,19 @@ router.post('/addAuctionForm', async (req, res) => {
     }
 });
 
-///newForm
+//get all auctions
+router.get('/allAuctions', async (req, res) => {
+    try {
+        const auctions = await getAllAuctions();
+        res.send(auctions);
+    } catch (error) {
+        console.error("Error fetching auctions:", error);
+        res.status(500).send({ error: 'Failed to fetch auctions' });
+    }
+});
+
+
+///newForm  allAuctions
 
 router.post('/newForm', (req,res)=>{
     const { user } = req.body;  // receive 'user' from the request

@@ -30,6 +30,16 @@ async function createAuction(auctionName,
   };
 }
 
+async function getAllAuctions() {
+    try {
+        const auctions = await Auction.find({});
+        return auctions;
+    } catch (error) {
+        console.error("Error fetching auctions:", error);
+        throw new Error('Failed to fetch auctions');
+    }
+}
 module.exports = {
-    createAuction
+    createAuction,
+    getAllAuctions
 };
