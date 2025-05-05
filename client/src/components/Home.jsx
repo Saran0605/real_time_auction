@@ -34,14 +34,14 @@ function Home() {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            closeAddAuctionModal();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                closeAddAuctionModal();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
 
     return (
@@ -115,28 +115,7 @@ function Home() {
                                 <button className="btn-close" onClick={closeJoinAuctionModal}></button>
                             </div>
                             <div className="modal-body">
-                                <form
-                                    onSubmit={async (e) => {
-                                        e.preventDefault();
-                                        const formData = new FormData(e.target);
-                                        const secretToken = Math.random().toString(36).substr(2, 10);
-                                        console.log('Generated secret token:', secretToken);
-                                        formData.append('secretToken', secretToken);
-                                        formData.set('processFee', '100');
-                                        fetch('http://localhost:5004/auction/joinAuction', {
-                                            method: 'POST',
-                                            body: formData
-                                        })
-                                        .then(res => res.json())
-                                        .then(data => {
-                                            alert(`Joined! Your secret token: ${secretToken}`);
-                                            closeJoinAuctionModal();
-                                        })
-                                        .catch(err => {
-                                            alert('Error joining auction');
-                                        });
-                                    }}
-                                >
+                                <form action="http://localhost:5004/auction/join/joinAuction" method="POST">
                                     <div className="form-group mb-2">
                                         <label>Name:</label>
                                         <input type="text" className="form-control" name="participantName" required />
@@ -150,14 +129,21 @@ function Home() {
                                         <input type="tel" className="form-control" name="phoneNo" required />
                                     </div>
                                     <div className="form-group mb-2">
-                                        <label>Process Fee (₹):</label>
-                                        <input type="number" className="form-control" value="100" readOnly />
+                                        <label>Do you agree to pay processing fee later?</label>
+                                        <select name="agreement" required>
+                                            <option value="">-- Select --</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
                                     </div>
                                     <div className="modal-footer">
                                         <button type="submit" className="btn btn-primary">Join</button>
                                         <button type="button" className="btn btn-secondary" onClick={closeJoinAuctionModal}>Close</button>
                                     </div>
                                 </form>
+
+
+
                             </div>
                         </div>
                     </div>
