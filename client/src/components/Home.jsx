@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AuctionList from './AuctionList';
 
 function Home() {
     const navigate = useNavigate();
@@ -149,6 +150,8 @@ function Home() {
                     </div>
                 </div>
             )}
+
+            <AuctionList/>
         </div>
     );
 }
