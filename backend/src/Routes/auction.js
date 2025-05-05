@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
-
+const {createAuction} = require('../Controller/auction');
 router.post('/addAuctionForm', async (req, res) => {
     console.log({ body: req.body });
 
-    const {
+    const {auctionName,auctionTiming,entryAmount,startDate,
+        time,participants,productList} = req.body;
+
+    try {
+        
+    const newAuction = await createAuction(
         auctionName,
         auctionTiming,
         entryAmount,
@@ -12,18 +17,7 @@ router.post('/addAuctionForm', async (req, res) => {
         time,
         participants,
         productList
-    } = req.body;
-
-    try {
-        const newAuction = await Auction.create({
-            name: auctionName,
-            timing: auctionTiming,
-            entryAmount,
-            startDate,
-            time,
-            participants,
-            productList
-        });
+    );
 
         res.send({ auction: newAuction });
     } catch (error) {
