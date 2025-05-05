@@ -63,7 +63,7 @@ function Home() {
                                 <button type="button" className="btn-close" onClick={closeAddAuctionModal} aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
-                                <form id='add_auction' onSubmit={handleSubmit}>
+                                <form action="http://localhost:5004/auction/addAuctionForm" method="POST" /* id='add_auction' onSubmit={handleSubmit} */>
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="form-group">

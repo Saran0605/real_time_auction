@@ -32,5 +32,17 @@ router.post('/addAuctionForm', async (req, res) => {
     }
 });
 
+///newForm
+
+router.post('/newForm', (req,res)=>{
+    const { user } = req.body;  // receive 'user' from the request
+
+    console.log('Received user:', user);
+
+    // You can now process/save user to database if needed
+    res.status(200).json({ message: `User ${user} received successfully.` });
+});
+
+
 module.exports = router;
 
