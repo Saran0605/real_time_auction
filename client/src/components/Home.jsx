@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function Home() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const [showJoinModal, setShowJoinModal] = useState(false);
 
     const gotoAuctionRoom = () => {
         navigate('/auction');
@@ -18,18 +19,13 @@ function Home() {
         setShowModal(false);
     };
 
-/*     const handleSubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const formObject = Object.fromEntries(formData);
+    const openJoinAuctionModal = () => {
+        setShowJoinModal(true);
+    };
 
-        fetch('http://localhost:5004/auction/addAuctionForm', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formObject)
-        }) */
+    const closeJoinAuctionModal = () => {
+        setShowJoinModal(false);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -53,6 +49,7 @@ function Home() {
             <h1>Welcome to home Page!</h1>
             <button className="btn btn-primary" onClick={gotoAuctionRoom}>Auction Room</button>
             <button className="btn btn-success" onClick={openAddAuctionModal}>Add Auction</button>
+            <button className="btn btn-success" onClick={openJoinAuctionModal}>Join Auction</button>
 
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1" role="dialog">
@@ -105,7 +102,63 @@ function Home() {
                                     </div>
                                 </form>
                             </div>
-
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showJoinModal && (
+                <div className="modal show d-block" tabIndex="-1">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Join Auction</h5>
+                                <button className="btn-close" onClick={closeJoinAuctionModal}></button>
+                            </div>
+                            <div className="modal-body">
+                                <form
+                                    onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        const formData = new FormData(e.target);
+                                        const secretToken = Math.random().toString(36).substr(2, 10);
+                                        console.log('Generated secret token:', secretToken);
+                                        formData.append('secretToken', secretToken);
+                                        formData.set('processFee', '100');
+                                        fetch('http://localhost:5004/auction/joinAuction', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            alert(`Joined! Your secret token: ${secretToken}`);
+                                            closeJoinAuctionModal();
+                                        })
+                                        .catch(err => {
+                                            alert('Error joining auction');
+                                        });
+                                    }}
+                                >
+                                    <div className="form-group mb-2">
+                                        <label>Name:</label>
+                                        <input type="text" className="form-control" name="participantName" required />
+                                    </div>
+                                    <div className="form-group mb-2">
+                                        <label>Place:</label>
+                                        <input type="text" className="form-control" name="place" required />
+                                    </div>
+                                    <div className="form-group mb-2">
+                                        <label>Phone No:</label>
+                                        <input type="tel" className="form-control" name="phoneNo" required />
+                                    </div>
+                                    <div className="form-group mb-2">
+                                        <label>Process Fee (₹):</label>
+                                        <input type="number" className="form-control" value="100" readOnly />
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-primary">Join</button>
+                                        <button type="button" className="btn btn-secondary" onClick={closeJoinAuctionModal}>Close</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
