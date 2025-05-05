@@ -7,6 +7,15 @@ function Home() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [showJoinModal, setShowJoinModal] = useState(false);
+    const [secretToken, setSecretToken] = useState('');
+
+    React.useEffect(() => {
+        setSecretToken(
+            Array.from(window.crypto.getRandomValues(new Uint8Array(4))) // 4 bytes = 8 hex chars
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('')
+        );
+    }, [showJoinModal]);
 
     const gotoAuctionRoom = () => {
         navigate('/auction');
@@ -116,7 +125,12 @@ function Home() {
                                 <button className="btn-close" onClick={closeJoinAuctionModal}></button>
                             </div>
                             <div className="modal-body">
+                                <div className="mb-2">
+                                    <label>Secret Token:</label>
+                                    <input type="text" className="form-control" value={secretToken} readOnly name="secretToken"/>
+                                </div>
                                 <form action="http://localhost:5004/auction/join/joinAuction" method="POST">
+                                    <input type="hidden" name="secretToken" value={secretToken} />
                                     <div className="form-group mb-2">
                                         <label>Name:</label>
                                         <input type="text" className="form-control" name="participantName" required />
@@ -142,9 +156,6 @@ function Home() {
                                         <button type="button" className="btn btn-secondary" onClick={closeJoinAuctionModal}>Close</button>
                                     </div>
                                 </form>
-
-
-
                             </div>
                         </div>
                     </div>

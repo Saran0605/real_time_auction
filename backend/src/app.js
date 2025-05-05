@@ -15,8 +15,8 @@ app.use(cors()); // <-- Allow all origins (or configure it below)
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.use('/auction', require('./Routes/auction'));
-app.use('/auction/join', require('./Routes/joinauction'));
+const joinauctionRoutes = require('./Routes/joinauction');
+app.use('/auction', joinauctionRoutes);
 
 app.get('/', (req,res)=>{
     res.send('Hello World!');
@@ -25,3 +25,5 @@ app.get('/', (req,res)=>{
 app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`);
 })
+
+module.exports = app;

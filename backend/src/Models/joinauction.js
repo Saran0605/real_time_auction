@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
 
 const joinAuctionSchema = new mongoose.Schema({
-    participantName: String,
-    place: String,
-    phoneNo: Number,
-    agreement: String,  // Store Yes/No for agreement
+  secretToken: String,
+  participantName: String,
+  place: String,
+  phoneNo: Number,
+  agreement: String
 }, {
-    timestamps: true,
+  timestamps: true
 });
 
-const joinAuction = mongoose.model('joinAuction', joinAuctionSchema);
+const joinAuction = mongoose.model('joinAuction', joinAuctionSchema); 
 
 module.exports = joinAuction;
