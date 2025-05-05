@@ -15,8 +15,10 @@ app.use(cors()); // <-- Allow all origins (or configure it below)
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+app.use('/action',require('./Routes/action'));
 const joinauctionRoutes = require('./Routes/joinauction');
 app.use('/auction', joinauctionRoutes);
+
 
 app.get('/', (req,res)=>{
     res.send('Hello World!');
