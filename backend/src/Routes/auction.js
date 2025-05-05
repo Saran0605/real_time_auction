@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createAuction,getAllAuctions} = require('../Controller/auction');
+const {createAuction,getAllAuctions, goAuction} = require('../Controller/auction');
 router.post('/addAuctionForm', async (req, res) => {
     console.log({ body: req.body });
 
@@ -38,7 +38,27 @@ router.get('/allAuctions', async (req, res) => {
 });
 
 
-///newForm  allAuctions
+router.post('/joinNow', async (req, res) => {
+    console.log({ body: req.body });
+
+    const {secretToken} = req.body;
+
+    try {
+        
+    const joinAuction = await goAuction(
+        secretToken
+    );
+
+
+        res.send({ auction: joinAuction });
+    } catch (error) {
+        console.error("Error adding auction:", error);
+        res.status(500).send({ error: 'Failed to add auction' });
+    }
+});
+
+
+///newForm  allAuctions 
 
 router.post('/newForm', (req,res)=>{
     const { user } = req.body;  // receive 'user' from the request

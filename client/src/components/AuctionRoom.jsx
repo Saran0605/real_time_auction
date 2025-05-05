@@ -74,6 +74,7 @@ function AuctionRoom() {
                                         <input
                                             type="text"
                                             className="form-control"
+                                            name='secretToken'
                                             id="secretToken"
                                             value={secretToken}
                                             onChange={(e) => setSecretToken(e.target.value)}

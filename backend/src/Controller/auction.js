@@ -39,7 +39,20 @@ async function getAllAuctions() {
         throw new Error('Failed to fetch auctions');
     }
 }
+
+
+async function goAuction(secretToken) {
+
+    const newAuction = await Auction.create({
+        secretToken
+    });
+  return {
+    secretToken
+  };
+}
+
 module.exports = {
     createAuction,
-    getAllAuctions
+    getAllAuctions,
+    goAuction
 };
