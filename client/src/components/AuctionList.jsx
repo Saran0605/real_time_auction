@@ -86,6 +86,15 @@ const AuctionList = () => {
             {filteredAuctions.map((auction, index) => (
               <div key={index} className="col-12 col-lg-8 mb-4">
                 <div className="card border-0 shadow-lg auction-card">
+                  {/* Show image if available */}
+                  {auction.imageUrl && (
+                    <img
+                      src={`http://localhost:5004/uploads/${auction.imageUrl}`}
+                      alt={auction.name}
+                      className="card-img-top"
+                      style={{ maxHeight: '250px', objectFit: 'cover', borderTopLeftRadius: '15px', borderTopRightRadius: '15px' }}
+                    />
+                  )}
                   <div className="card-body p-4">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <h4 className="card-title text-primary mb-0">{auction.name}</h4>

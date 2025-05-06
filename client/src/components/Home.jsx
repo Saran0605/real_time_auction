@@ -6,16 +6,7 @@ import AuctionList from './AuctionList';
 function Home() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-   /*  const [showJoinModal, setShowJoinModal] = useState(false);
-    const [secretToken, setSecretToken] = useState('');
 
-    React.useEffect(() => {
-        setSecretToken(
-            Array.from(window.crypto.getRandomValues(new Uint8Array(4))) // 4 bytes = 8 hex chars
-                .map(b => b.toString(16).padStart(2, '0'))
-                .join('')
-        );
-    }, [showJoinModal]); */
 
     const gotoAuctionRoom = () => {
         navigate('/auction');
@@ -29,13 +20,7 @@ function Home() {
         setShowModal(false);
     };
 
-    /* const openJoinAuctionModal = () => {
-        setShowJoinModal(true);
-    };
 
-    const closeJoinAuctionModal = () => {
-        setShowJoinModal(false);
-    }; */
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -60,7 +45,7 @@ function Home() {
             <button className="btn btn-primary" onClick={gotoAuctionRoom}>Auction Room</button>
 
             <button className="btn btn-success" onClick={openAddAuctionModal}>Add Auction</button>
-{/*             <button className="btn btn-success" onClick={openJoinAuctionModal}>Join Auction</button> */}
+            {/*             <button className="btn btn-success" onClick={openJoinAuctionModal}>Join Auction</button> */}
 
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1" role="dialog">
@@ -71,7 +56,7 @@ function Home() {
                                 <button type="button" className="btn-close" onClick={closeAddAuctionModal} aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
-                                <form action="http://localhost:5004/auction/addAuctionForm" method="POST" /* id='add_auction' onSubmit={handleSubmit} */>
+                                <form onSubmit={handleSubmit} encType="multipart/form-data">
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="form-group">
@@ -104,6 +89,11 @@ function Home() {
                                                 <label htmlFor="productList">Product List:</label>
                                                 <textarea className="form-control" id="productList" name="productList" rows="4"></textarea>
                                             </div>
+                                            <div className="form-group">
+                                                <label htmlFor="image">Upload Image:</label>
+                                                <input type="file" className="form-control" id="image" name="image" accept="image/*" />
+                                            </div>
+
                                         </div>
                                     </div>
 
@@ -117,53 +107,8 @@ function Home() {
                     </div>
                 </div>
             )}
-           {/*  {showJoinModal && (
-                <div className="modal show d-block" tabIndex="-1">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Join Auction</h5>
-                                <button className="btn-close" onClick={closeJoinAuctionModal}></button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="mb-2">
-                                    <label>Secret Token:</label>
-                                    <input type="text" className="form-control" value={secretToken} readOnly name="secretToken"/>
-                                </div>
-                                <form action="http://localhost:5004/auction/join/joinAuction" method="POST">
-                                    <input type="hidden" name="secretToken" value={secretToken} />
-                                    <div className="form-group mb-2">
-                                        <label>Name:</label>
-                                        <input type="text" className="form-control" name="participantName" required />
-                                    </div>
-                                    <div className="form-group mb-2">
-                                        <label>Place:</label>
-                                        <input type="text" className="form-control" name="place" required />
-                                    </div>
-                                    <div className="form-group mb-2">
-                                        <label>Phone No:</label>
-                                        <input type="tel" className="form-control" name="phoneNo" required />
-                                    </div>
-                                    <div className="form-group mb-2">
-                                        <label>Do you agree to pay processing fee later?</label>
-                                        <select name="agreement" required>
-                                            <option value="">-- Select --</option>
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button type="submit" className="btn btn-primary">Join</button>
-                                        <button type="button" className="btn btn-secondary" onClick={closeJoinAuctionModal}>Close</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )} */}
 
-            <AuctionList/>
+            <AuctionList />
         </div>
     );
 }

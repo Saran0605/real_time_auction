@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); // <-- Add this line
 const app = express();
 
 const port = 5004;
@@ -14,6 +15,7 @@ app.use(cors()); // <-- Allow all origins (or configure it below)
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/auction', require('./Routes/auction'));
 const joinauctionRoutes = require('./Routes/joinauction');

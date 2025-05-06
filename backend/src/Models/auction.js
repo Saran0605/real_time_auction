@@ -7,12 +7,15 @@ const addAuctionSchema = new mongoose.Schema({
     startDate: Date,
     time: String,
     participants: Number,
-    productList: String
+    productList: String,
+    imageUrl: {
+        type: String,
+        required: false
+    }
 }, {
     timestamps: true
 });
 
 const Auction = mongoose.model('newAuction', addAuctionSchema);
-
 
 module.exports = Auction;

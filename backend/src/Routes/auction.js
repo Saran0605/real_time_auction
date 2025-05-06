@@ -1,25 +1,45 @@
 const express = require('express');
 const router = express.Router();
-const {createAuction,getAllAuctions, goAuction} = require('../Controller/auction');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+const { createAuction, getAllAuctions, goAuction } = require('../Controller/auction');
 
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-router.post('/addAuctionForm', async (req, res) => {
+// Set up multer storage for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, uploadsDir);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+router.post('/addAuctionForm', upload.single('image'), async (req, res) => {
     console.log({ body: req.body });
 
-    const {auctionName,auctionTiming,entryAmount,startDate,
-        time,participants,productList} = req.body;
+    const { auctionName, auctionTiming, entryAmount, startDate, time, participants, productList } = req.body;
 
     try {
-        
-    const newAuction = await createAuction(
-        auctionName,
-        auctionTiming,
-        entryAmount,
-        startDate,
-        time,
-        participants,
-        productList
-    );
+        // Include the image file uploaded
+        const newAuction = await createAuction(
+            auctionName,
+            auctionTiming,
+            entryAmount,
+            startDate,
+            time,
+            participants,
+            productList,
+            req.file 
+        );
 
         res.send({ auction: newAuction });
     } catch (error) {
@@ -28,7 +48,7 @@ router.post('/addAuctionForm', async (req, res) => {
     }
 });
 
-//get all auctions
+// GET route for fetching all auctions
 router.get('/allAuctions', async (req, res) => {
     try {
         const auctions = await getAllAuctions();
@@ -39,38 +59,19 @@ router.get('/allAuctions', async (req, res) => {
     }
 });
 
-
+// POST route for joining an auction
 router.post('/joinNow', async (req, res) => {
     console.log({ body: req.body });
 
-    const {secretToken} = req.body;
+    const { secretToken } = req.body;
 
     try {
-        
-    const joinAuction = await goAuction(
-        secretToken
-    );
-
-
+        const joinAuction = await goAuction(secretToken);
         res.send({ auction: joinAuction });
     } catch (error) {
         console.error("Error adding auction:", error);
-        res.status(500).send({ error: 'Failed to add auction' });
+        res.status(500).send({ error: 'Failed to join auction' });
     }
 });
 
-
-///newForm  allAuctions 
-
-router.post('/newForm', (req,res)=>{
-    const { user } = req.body;  // receive 'user' from the request
-
-    console.log('Received user:', user);
-
-    // You can now process/save user to database if needed
-    res.status(200).json({ message: `User ${user} received successfully.` });
-});
-
-
 module.exports = router;
-
