@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {createAuction,getAllAuctions, goAuction} = require('../Controller/auction');
+
+
 router.post('/addAuctionForm', async (req, res) => {
     console.log({ body: req.body });
 
