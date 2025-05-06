@@ -1,64 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function AuctionRoom() {
     const [showModal, setShowModal] = useState(false);
     const [secretToken, setSecretToken] = useState('');
+    const [joinedAuctions, setJoinedAuctions] = useState([]);
 
-    const handleUserChange = (e) => {
-        // Add handler for the user input if needed
-        console.log(e.target.value);
-    };
+    useEffect(() => {
+        fetch('http://localhost:5004/joinauction/all')
+            .then(res => res.json())
+            .then(data => {
+                setJoinedAuctions(data);
+            })
+            .catch(err => {
+                console.error('Failed to fetch joined auctions:', err);
+            });
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         fetch('http://localhost:5004/auction/joinNow', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ secretToken })
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text().then(text => {
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    return text;
-                }
+            .then(res => res.json())
+            .then(data => {
+                console.log('Joined:', data);
+                setShowModal(false);
+                setSecretToken('');
+                // Re-fetch all auctions to include the new one
+                return fetch('http://localhost:5004/joinauction/all');
+            })
+            .then(res => res.json())
+            .then(data => setJoinedAuctions(data))
+            .catch(err => {
+                console.error('Join failed:', err);
+                alert('Failed to join. Please try again.');
             });
-        })
-        .then(data => {
-            console.log('Success:', data);
-            setShowModal(false);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to join. Please try again.');
-        });
     };
 
     return (
-        <div className="auctionRoom">
-            <h1>Welcome to Auction Room!</h1>
+        <div className="auctionRoom container p-4">
+            <h1 className="mb-4">Welcome to Auction Room!</h1>
 
-            <a href="http://localhost:5004/auction/addAuctionForm"> go to backend</a> 
+            <a href="http://localhost:5004/auction/addAuctionForm" target="_blank" rel="noreferrer" className="btn btn-link mb-3">
+                Go to backend
+            </a>
 
-            <button className="btn btn-primary" onClick={() => setShowModal(true)}>Participate Now!!</button>
+            <button className="btn btn-primary mb-4" onClick={() => setShowModal(true)}>Participate Now!!</button>
 
-            <form action="http://localhost:5004/auction/newForm" method="POST">
-                <input 
-                    type="text" 
-                    name="user" 
-                    defaultValue="ragul"
-                    onChange={handleUserChange}
-                />
-                <input type="submit" />
-            </form>
-
-            {/* Participation Modal */}
+            {/* Modal for entering secret token */}
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1">
                     <div className="modal-dialog modal-dialog-centered">
@@ -69,12 +60,11 @@ function AuctionRoom() {
                             </div>
                             <div className="modal-body">
                                 <form onSubmit={handleSubmit}>
-                                    <div className="form-group mb-4">
+                                    <div className="form-group mb-3">
                                         <label htmlFor="secretToken">Secret Token:</label>
                                         <input
                                             type="text"
                                             className="form-control"
-                                            name='secretToken'
                                             id="secretToken"
                                             value={secretToken}
                                             onChange={(e) => setSecretToken(e.target.value)}
@@ -83,9 +73,7 @@ function AuctionRoom() {
                                         />
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        <button type="submit" className="btn btn-primary">
-                                            Submit
-                                        </button>
+                                        <button type="submit" className="btn btn-success">Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -93,6 +81,39 @@ function AuctionRoom() {
                     </div>
                 </div>
             )}
+
+            {/* Display Joined Auctions as cards, 3 per row */}
+            <div className="mt-5">
+                <h3>All Joined Auctions</h3>
+                <div className="row">
+                    {joinedAuctions.map((auction, index) => (
+                        <div className="col-md-6 mb-4" key={auction._id || index}>
+                            <div className="card h-100 shadow" style={{ minHeight: '320px', fontSize: '1.1rem' }}>
+                                <div className="card-body d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h4 className="card-title mb-3">{auction.auctionName || 'N/A'}</h4>
+                                        <p className="card-text mb-2">
+                                            <strong>Participant:</strong> {auction.participantName || 'N/A'}<br />
+                                            <strong>Place:</strong> {auction.place}<br />
+                                            <strong>Phone No:</strong> {auction.phoneNo}<br />
+                                            <strong>Agreement:</strong> {auction.agreement}
+                                        </p>
+                                    </div>
+                                    <button
+                                        className="btn btn-primary mt-3"
+                                        onClick={() => {
+                                            setShowModal(true);
+                                            setSecretToken('');
+                                        }}
+                                    >
+                                        Participate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

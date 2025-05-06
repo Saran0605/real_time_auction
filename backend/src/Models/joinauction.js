@@ -4,8 +4,10 @@ const joinAuctionSchema = new mongoose.Schema({
   secretToken: String,
   participantName: String,
   place: String,
-  phoneNo: Number,
-  agreement: String
+  phoneNo: String,
+  agreement: String,
+  auctionName: String,
+  auctionId: String
 }, {
   timestamps: true
 });

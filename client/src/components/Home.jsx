@@ -6,7 +6,7 @@ import AuctionList from './AuctionList';
 function Home() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-    const [showJoinModal, setShowJoinModal] = useState(false);
+   /*  const [showJoinModal, setShowJoinModal] = useState(false);
     const [secretToken, setSecretToken] = useState('');
 
     React.useEffect(() => {
@@ -15,7 +15,7 @@ function Home() {
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('')
         );
-    }, [showJoinModal]);
+    }, [showJoinModal]); */
 
     const gotoAuctionRoom = () => {
         navigate('/auction');
@@ -29,13 +29,13 @@ function Home() {
         setShowModal(false);
     };
 
-    const openJoinAuctionModal = () => {
+    /* const openJoinAuctionModal = () => {
         setShowJoinModal(true);
     };
 
     const closeJoinAuctionModal = () => {
         setShowJoinModal(false);
-    };
+    }; */
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -58,8 +58,9 @@ function Home() {
         <div className="home">
             <h1>Welcome to home Page!</h1>
             <button className="btn btn-primary" onClick={gotoAuctionRoom}>Auction Room</button>
+
             <button className="btn btn-success" onClick={openAddAuctionModal}>Add Auction</button>
-            <button className="btn btn-success" onClick={openJoinAuctionModal}>Join Auction</button>
+{/*             <button className="btn btn-success" onClick={openJoinAuctionModal}>Join Auction</button> */}
 
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1" role="dialog">
@@ -116,7 +117,7 @@ function Home() {
                     </div>
                 </div>
             )}
-            {showJoinModal && (
+           {/*  {showJoinModal && (
                 <div className="modal show d-block" tabIndex="-1">
                     <div className="modal-dialog">
                         <div className="modal-content">
@@ -160,7 +161,7 @@ function Home() {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             <AuctionList/>
         </div>

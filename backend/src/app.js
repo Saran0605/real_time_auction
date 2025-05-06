@@ -16,7 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.use('/auction', require('./Routes/auction'));
-app.use('/auction/join', require('./Routes/joinauction'));
+const joinauctionRoutes = require('./Routes/joinauction');
+app.use('/joinauction', joinauctionRoutes);
 
 app.get('/', (req,res)=>{
     res.send('Hello World!');

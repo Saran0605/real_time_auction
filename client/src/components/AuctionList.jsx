@@ -7,6 +7,9 @@ const AuctionList = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProducts, setSelectedProducts] = useState(null);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [secretToken, setSecretToken] = useState('');
+  const [selectedAuction, setSelectedAuction] = useState(null);
 
   useEffect(() => {
     fetchAuctions();
@@ -15,12 +18,8 @@ const AuctionList = () => {
   const fetchAuctions = async () => {
     try {
       const response = await axios.get('http://localhost:5004/auction/allAuctions');
-      if (response.status === 200) {
-        console.log('Fetched Auctions:', response.data);
-        setAuctions(response.data);
-      } else {
-        console.error('Error fetching auctions: Invalid response status', response.status);
-      }
+      console.log('Fetched Auctions:', response.data);
+      setAuctions(response.data);
     } catch (error) {
       console.error('Error fetching auctions:', error);
     }
@@ -31,7 +30,7 @@ const AuctionList = () => {
   };
 
   const filteredAuctions = auctions.filter(auction =>
-    auction?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || false
+    auction.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openProductList = (products) => {
@@ -40,6 +39,20 @@ const AuctionList = () => {
 
   const closeProductList = () => {
     setSelectedProducts(null);
+  };
+
+  const openJoinAuctionModal = (auction) => {
+    setSelectedAuction(auction);
+    setShowJoinModal(true);
+    setSecretToken(
+      Array.from(window.crypto.getRandomValues(new Uint8Array(4)))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+    );
+  };
+
+  const closeJoinAuctionModal = () => {
+    setShowJoinModal(false);
   };
 
   return (
@@ -79,6 +92,10 @@ const AuctionList = () => {
                       <span className="badge bg-success">{auction.status || 'Active'}</span>
                     </div>
                     <div className="card-text">
+                      {/* <div className="info-row py-2 border-bottom">
+                        <i className="bi bi-clock-fill text-warning me-2"></i>
+                        <span className="ms-auto fw-bold">{auction._id}</span>
+                      </div> */}
                       <div className="info-row py-2 border-bottom">
                         <i className="bi bi-clock-fill text-warning me-2"></i>
                         <span className="text-muted">Timing:</span>
@@ -100,7 +117,7 @@ const AuctionList = () => {
                         <span className="ms-auto fw-bold">{auction.participants}</span>
                       </div>
                       <div className="info-row py-2">
-                        <button 
+                        <button
                           className="btn btn-outline-info btn-sm"
                           onClick={() => openProductList(auction.productList)}
                         >
@@ -111,8 +128,10 @@ const AuctionList = () => {
                     </div>
                   </div>
                   <div className="card-footer bg-transparent p-4 d-flex justify-content-end">
-                    <button className="btn btn-primary btn-lg px-5">
-                      <i className="bi bi-arrow-right-circle me-2"></i>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => openJoinAuctionModal(auction)}
+                    >
                       Join Auction
                     </button>
                   </div>
@@ -145,43 +164,48 @@ const AuctionList = () => {
             </div>
           )}
 
-          {showModal && (
+          {showJoinModal && selectedAuction && (
             <div className="modal show d-block" tabIndex="-1">
-              <div className="modal-dialog modal-lg modal-dialog-scrollable">
+              <div className="modal-dialog">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title">Auction List</h5>
-                    <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                    <h5 className="modal-title">Join Auction</h5>
+                    <button className="btn-close" onClick={closeJoinAuctionModal}></button>
                   </div>
                   <div className="modal-body">
-                    <div className="table-responsive">
-                      <table className="table table-hover">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Timing</th>
-                            <th>Entry Amount</th>
-                            <th>Start Date</th>
-                            <th>Participants</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {auctions.map((auction, index) => (
-                            <tr key={index}>
-                              <td>{auction.name}</td>
-                              <td>{auction.timing}</td>
-                              <td>₹{auction.entryAmount}</td>
-                              <td>{formatDate(auction.startDate)}</td>
-                              <td>{auction.participants}</td>
-                              <td>
-                                <span className="badge bg-success">{auction.status || 'Active'}</span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="mb-2">
+                      <label>Secret Token:</label>
+                      <input type="text" className="form-control" value={secretToken} readOnly name="secretToken" />
                     </div>
+                    <form action="http://localhost:5004/joinauction/join/joinAuction" method="POST">
+                      <input type="hidden" name="secretToken" value={secretToken} />
+                      <input type="hidden" name="auctionName" value={selectedAuction.name} />
+                      <input type="hidden" name="auctionId" value={selectedAuction._id} />
+                      <div className="form-group mb-2">
+                        <label>Name:</label>
+                        <input type="text" className="form-control" name="participantName" required />
+                      </div>
+                      <div className="form-group mb-2">
+                        <label>Place:</label>
+                        <input type="text" className="form-control" name="place" required />
+                      </div>
+                      <div className="form-group mb-2">
+                        <label>Phone No:</label>
+                        <input type="tel" className="form-control" name="phoneNo" required />
+                      </div>
+                      <div className="form-group mb-2">
+                        <label>Do you agree to pay processing fee later?</label>
+                        <select name="agreement" required>
+                          <option value="">-- Select --</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                      <div className="modal-footer">
+                        <button type="submit" className="btn btn-primary">Join</button>
+                        <button type="button" className="btn btn-secondary" onClick={closeJoinAuctionModal}>Close</button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
