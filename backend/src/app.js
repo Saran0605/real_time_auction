@@ -9,16 +9,14 @@ app.use(cors()); // <-- Allow all origins (or configure it below)
 
 /* app.use(cors({
     origin: 'http://localhost:5173', // only allow this origin
-    credentials: true
+    credaentaials: true
   })); */
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.use('/action',require('./Routes/action'));
-const joinauctionRoutes = require('./Routes/joinauction');
-app.use('/auction', joinauctionRoutes);
-
+app.use('/auction', require('./Routes/auction'));
+app.use('/auction/join', require('./Routes/joinauction'));
 
 app.get('/', (req,res)=>{
     res.send('Hello World!');
@@ -27,5 +25,3 @@ app.get('/', (req,res)=>{
 app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`);
 })
-
-module.exports = app;

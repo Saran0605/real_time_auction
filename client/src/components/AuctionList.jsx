@@ -15,8 +15,12 @@ const AuctionList = () => {
   const fetchAuctions = async () => {
     try {
       const response = await axios.get('http://localhost:5004/auction/allAuctions');
-      console.log('Fetched Auctions:', response.data);
-      setAuctions(response.data);
+      if (response.status === 200) {
+        console.log('Fetched Auctions:', response.data);
+        setAuctions(response.data);
+      } else {
+        console.error('Error fetching auctions: Invalid response status', response.status);
+      }
     } catch (error) {
       console.error('Error fetching auctions:', error);
     }
@@ -27,7 +31,7 @@ const AuctionList = () => {
   };
 
   const filteredAuctions = auctions.filter(auction =>
-    auction.name.toLowerCase().includes(searchQuery.toLowerCase())
+    auction?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || false
   );
 
   const openProductList = (products) => {

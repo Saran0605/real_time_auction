@@ -1,0 +1,168 @@
+.auction-ground {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    color: white;
+    padding: 2rem 0;
+}
+
+.bid-info-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.5s ease-out;
+}
+
+.current-bid {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #4CAF50, #45bf55);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin: 1rem 0;
+    animation: pulse 1.5s infinite;
+}
+
+.bid-history {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-top: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.bid-history-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.bid-history-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.image-slider {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: scale(0.98);
+    transition: transform 0.3s ease;
+}
+
+.image-slider:hover {
+    transform: scale(1);
+}
+
+.main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.05);
+}
+
+.image-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 2;
+}
+
+.slider-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.slider-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.1);
+}
+
+.bid-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 2rem;
+}
+
+.bid-btn {
+    position: relative;
+    padding: 20px 40px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: linear-gradient(45deg, #FF512F, #DD2476);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bid-btn:nth-child(1) { background: linear-gradient(45deg, #FF512F, #DD2476); }
+.bid-btn:nth-child(2) { background: linear-gradient(45deg, #11998e, #38ef7d); }
+.bid-btn:nth-child(3) { background: linear-gradient(45deg, #8E2DE2, #4A00E0); }
+
+.bid-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.bid-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.4);
+}
