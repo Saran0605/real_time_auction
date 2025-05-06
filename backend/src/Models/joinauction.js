@@ -7,7 +7,8 @@ const joinAuctionSchema = new mongoose.Schema({
   phoneNo: String,
   agreement: String,
   auctionName: String,
-  auctionId: String
+  auctionId: String,
+  auctionDescription: String
 }, {
   timestamps: true
 });

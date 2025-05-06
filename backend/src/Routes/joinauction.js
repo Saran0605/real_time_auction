@@ -4,10 +4,10 @@ const { participateAuction, getJoinedAuctions } = require('../controller/joinauc
 
 router.post('/joinAuction', async (req, res) => {
     console.log("Received body:", req.body);
-    const { secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId } = req.body;
+    const { secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription } = req.body;
 
     try {
-        const response = await participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId);
+        const response = await participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription);
         res.json({ message: 'Successfully joined auction', data: response });
     } catch (error) {
         console.error("Error in joining auction:", error);
@@ -17,10 +17,10 @@ router.post('/joinAuction', async (req, res) => {
 
 router.post('/join/joinAuction', async (req, res) => {
     console.log("Received body:", req.body);
-    const { secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId } = req.body;
+    const { secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription } = req.body;
 
     try {
-        const response = await participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId);
+        const response = await participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription);
         res.json({ message: 'Successfully joined auction', data: response });
     } catch (error) {
         console.error("Error in joining auction:", error);

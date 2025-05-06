@@ -8,6 +8,7 @@ const addAuctionSchema = new mongoose.Schema({
     time: String,
     participants: Number,
     productList: String,
+    description: String, // <-- Add this line
     imageUrl: {
         type: String,
         required: false

@@ -30,7 +30,7 @@ const AuctionList = () => {
   };
 
   const filteredAuctions = auctions.filter(auction =>
-    auction.name.toLowerCase().includes(searchQuery.toLowerCase())
+    (auction.name || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openProductList = (products) => {
@@ -101,10 +101,13 @@ const AuctionList = () => {
                       <span className="badge bg-success">{auction.status || 'Active'}</span>
                     </div>
                     <div className="card-text">
-                      {/* <div className="info-row py-2 border-bottom">
-                        <i className="bi bi-clock-fill text-warning me-2"></i>
-                        <span className="ms-auto fw-bold">{auction._id}</span>
-                      </div> */}
+                      {/* Description field */}
+                      {auction.description && (
+                        <div className="mb-2">
+                          <strong>Description:</strong>
+                          <div>{auction.description}</div>
+                        </div>
+                      )}
                       <div className="info-row py-2 border-bottom">
                         <i className="bi bi-clock-fill text-warning me-2"></i>
                         <span className="text-muted">Timing:</span>
@@ -190,6 +193,7 @@ const AuctionList = () => {
                       <input type="hidden" name="secretToken" value={secretToken} />
                       <input type="hidden" name="auctionName" value={selectedAuction.name} />
                       <input type="hidden" name="auctionId" value={selectedAuction._id} />
+                      <input type="hidden" name="auctionDescription" value={selectedAuction.description} />
                       <div className="form-group mb-2">
                         <label>Name:</label>
                         <input type="text" className="form-control" name="participantName" required />
@@ -222,7 +226,7 @@ const AuctionList = () => {
           )}
         </div>
       </div>
-      <style jsx>{`
+      <style>{`
         .auction-wrapper {
           min-height: 100vh;
           background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);

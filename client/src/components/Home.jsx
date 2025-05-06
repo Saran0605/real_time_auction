@@ -75,6 +75,10 @@ function Home() {
                                                 <label htmlFor="startDate">Start Date:</label>
                                                 <input type="date" className="form-control" id="startDate" name="startDate" />
                                             </div>
+                                            <div className="form-group">
+                                                <label htmlFor="description">Description:</label>
+                                                <textarea className="form-control" id="description" name="description" rows="3"></textarea>
+                                            </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">

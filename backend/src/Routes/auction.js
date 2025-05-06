@@ -26,7 +26,7 @@ const upload = multer({ storage: storage });
 router.post('/addAuctionForm', upload.single('image'), async (req, res) => {
     console.log({ body: req.body });
 
-    const { auctionName, auctionTiming, entryAmount, startDate, time, participants, productList } = req.body;
+    const { auctionName, auctionTiming, entryAmount, startDate, time, participants, productList, description } = req.body;
 
     try {
         // Include the image file uploaded
@@ -38,7 +38,8 @@ router.post('/addAuctionForm', upload.single('image'), async (req, res) => {
             time,
             participants,
             productList,
-            req.file 
+            req.file,
+            description // <-- Pass description to controller
         );
 
         res.send({ auction: newAuction });

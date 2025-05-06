@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function AuctionRoom() {
     const [showModal, setShowModal] = useState(false);
     const [secretToken, setSecretToken] = useState('');
     const [joinedAuctions, setJoinedAuctions] = useState([]);
+    const [selectedAuction, setSelectedAuction] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:5004/joinauction/all')
@@ -25,14 +28,21 @@ function AuctionRoom() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log('Joined:', data);
                 setShowModal(false);
                 setSecretToken('');
-                // Re-fetch all auctions to include the new one
-                return fetch('http://localhost:5004/joinauction/all');
+                // Navigate to AuctionGround with auctionName and auctionDescription
+                if (selectedAuction) {
+                    navigate('/auctionGround', {
+                        state: {
+                            auctionName: selectedAuction.name || selectedAuction.auctionName,
+                            auctionDescription: selectedAuction.description || selectedAuction.auctionDescription,
+                            secretToken
+                        }
+                    });
+                } else {
+                    navigate('/auctionGround', { state: { secretToken } });
+                }
             })
-            .then(res => res.json())
-            .then(data => setJoinedAuctions(data))
             .catch(err => {
                 console.error('Join failed:', err);
                 alert('Failed to join. Please try again.');
@@ -47,7 +57,7 @@ function AuctionRoom() {
                 Go to backend
             </a>
 
-            <button className="btn btn-primary mb-4" onClick={() => setShowModal(true)}>Participate Now!!</button>
+            <button className="btn btn-primary mb-4" onClick={() => { setShowModal(true); setSelectedAuction(null); }}>Participate Now!!</button>
 
             {/* Modal for entering secret token */}
             {showModal && (
@@ -91,10 +101,16 @@ function AuctionRoom() {
                             <div className="card h-100 shadow" style={{ minHeight: '320px', fontSize: '1.1rem' }}>
                                 <div className="card-body d-flex flex-column justify-content-between">
                                     <div>
-                                        <h4 className="card-title mb-3">{auction.auctionName || 'N/A'}</h4>
+                                        <h4 className="card-title mb-3">{auction.name || auction.auctionName || 'N/A'}</h4>
+                                        {auction.description && (
+                                            <div className="mb-2">
+                                                <strong>Description:</strong>
+                                                <div>{auction.description}</div>
+                                            </div>
+                                        )}
                                         <p className="card-text mb-2">
                                             <strong>Participant:</strong> {auction.participantName || 'N/A'}<br />
-                                            <strong>Place:</strong> {auction.place}<br />
+                                            <strong>Place:</strong> {auction.place || 'N/A'}<br />
                                             <strong>Phone No:</strong> {auction.phoneNo}<br />
                                             <strong>Agreement:</strong> {auction.agreement}
                                         </p>
@@ -104,10 +120,8 @@ function AuctionRoom() {
                                         onClick={() => {
                                             setShowModal(true);
                                             setSecretToken('');
-                                        }}
-                                    >
-                                        Participate
-                                    </button>
+                                            setSelectedAuction(auction);
+                                        }}>Participate</button>
                                 </div>
                             </div>
                         </div>

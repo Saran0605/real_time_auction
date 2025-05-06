@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Auction creation function
-async function createAuction(auctionName, auctionTiming, entryAmount, startDate, time, participants, productList, image) {
+async function createAuction(auctionName, auctionTiming, entryAmount, startDate, time, participants, productList, image, description) {
     // Store only the filename for the image
     const imageUrl = image ? image.filename : null;
     const newAuction = await Auction.create({
@@ -34,6 +34,7 @@ async function createAuction(auctionName, auctionTiming, entryAmount, startDate,
         time,
         participants,
         productList,
+        description, // <-- Store description
         imageUrl // Store only the filename in the database
     });
     return {
@@ -44,6 +45,7 @@ async function createAuction(auctionName, auctionTiming, entryAmount, startDate,
         time,
         participants,
         productList,
+        description, // <-- Return description
         imageUrl // Add image URL to the response
     };
 }

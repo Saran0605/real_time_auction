@@ -1,6 +1,6 @@
 const joinAuction = require('../models/joinauction');
 
-async function participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId) {
+async function participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription) {
     const newJoin = await joinAuction.create({
         secretToken,
         participantName,
@@ -8,7 +8,8 @@ async function participateAuction(secretToken, participantName, place, phoneNo, 
         phoneNo,
         agreement,
         auctionName,
-        auctionId
+        auctionId,
+        auctionDescription // <-- Store description
     });
 
     return newJoin;
