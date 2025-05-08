@@ -6,8 +6,10 @@ import { useLocation } from 'react-router-dom';
 function AuctionGround() {
     const location = useLocation();
     const { auctionName, auctionDescription, productList: stateProductList } = location.state || {};
+    
+    // Update timer to 60 seconds
+    const [timeLeft, setTimeLeft] = useState(60);
 
-    //const [productList, setProductList] = useState(stateProductList || '');
     const [currentBid, setCurrentBid] = useState(() => {
         const savedBid = localStorage.getItem('currentBid');
         return savedBid ? parseInt(savedBid, 10) : 100000;
@@ -72,6 +74,8 @@ function AuctionGround() {
         setCurrentBid(newBid);
         updateBidHistoryInCache(newBid, "You");
         setLastBidder("You");
+        // Reset timer on new bid
+        setTimeLeft(60);
     };
 
     const resetBids = () => {
@@ -102,6 +106,27 @@ function AuctionGround() {
         }
     }, [auctionName, auctionDescription, currentBid]);
 
+    // Add timer effect
+    useEffect(() => {
+        if (timeLeft <= 0) return; // Stop at 0
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [timeLeft]);
+
+    // Add format time function
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    // Add disabled state based on timer
+    const isBiddingDisabled = timeLeft <= 0;
+
     return (
         <div className="auction-ground">
             <div className="container py-5">
@@ -126,7 +151,9 @@ function AuctionGround() {
                                 Last Bidder: <span>{lastBidder}</span>
                             </div>
                             <div className="time-left">
-                                Time Left: <span>05:23</span>
+                                Time Left: <span className={timeLeft <= 30 ? 'text-danger' : ''}>
+                                    {formatTime(timeLeft)}
+                                </span>
                             </div>
                             <div className="bid-history">
                                 <h5>Bid History</h5>
@@ -164,15 +191,27 @@ function AuctionGround() {
 
                         {/* Bid Controls */}
                         <div className="bid-controls">
-                            <button className="bid-btn" onClick={() => handleBid(25000)}>
+                            <button 
+                                className="bid-btn" 
+                                onClick={() => handleBid(25000)}
+                                disabled={isBiddingDisabled}
+                            >
                                 +25K
                                 <span className="btn-effect"></span>
                             </button>
-                            <button className="bid-btn btn-primary" onClick={() => handleBid(50000)}>
+                            <button 
+                                className="bid-btn btn-primary" 
+                                onClick={() => handleBid(50000)}
+                                disabled={isBiddingDisabled}
+                            >
                                 +50K
                                 <span className="btn-effect"></span>
                             </button>
-                            <button className="bid-btn btn-large" onClick={() => handleBid(75000)}>
+                            <button 
+                                className="bid-btn btn-large" 
+                                onClick={() => handleBid(75000)}
+                                disabled={isBiddingDisabled}
+                            >
                                 +75K
                                 <span className="btn-effect"></span>
                             </button>
