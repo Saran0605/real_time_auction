@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import { participateAuction, getJoinedAuctions } from '../controller/joinauction.js';
+
 const router = express.Router();
-const { participateAuction, getJoinedAuctions } = require('../controller/joinauction');
 
 router.post('/joinAuction', async (req, res) => {
     console.log("Received body:", req.body);
@@ -52,4 +53,4 @@ router.get('/all', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

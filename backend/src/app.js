@@ -1,24 +1,29 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path'); // <-- Add this line
-const app = express();
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import authRoutes from './Routes/auth.js';
 
+const app = express();
 const port = 5004;
 
-require('./db/mongo');
-app.use(cors()); // <-- Allow all origins (or configure it below)
+// Fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-/* app.use(cors({
-    origin: 'http://localhost:5173', // only allow this origin
-    credaentaials: true
-  })); */
+import './db/mongo.js';
+app.use(cors());
 
 app.use(express.json());
+app.use('/api/auth', authRoutes);
+
 app.use(express.urlencoded({extended:true}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/auction', require('./Routes/auction'));
-const joinauctionRoutes = require('./Routes/joinauction');
+import auctionRoutes from './Routes/auction.js';
+app.use('/auction', auctionRoutes);
+
+import joinauctionRoutes from './Routes/joinauction.js';
 app.use('/joinauction', joinauctionRoutes);
 
 app.get('/', (req,res)=>{
@@ -27,4 +32,4 @@ app.get('/', (req,res)=>{
 
 app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`);
-})
+});

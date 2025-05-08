@@ -1,16 +1,18 @@
-const { shouldPlaceBid } = require('./geminiService');
+import { shouldPlaceBid } from './geminiService.js';
 
-async function testBidDecision() {
-    const productName = "iPhone 14 Pro";
-    const price = 172000;
-    const description = "Brand new, sealed box, 128GB with warranty.";
-
+const testGemini = async () => {
     try {
-        const decision = await shouldPlaceBid(productName, price, description);
-        console.log("Gemini Response:\n", decision);
+        console.log("Testing Gemini API with a sample auction...");
+        const response = await shouldPlaceBid(
+            "Platinum necklase with diamond pendant",
+            4500,
+            "made up of pure materials and diamond and only 7 exists in the world",
+        );
+        console.log("Gemini Response:", response);
     } catch (error) {
-        console.error("Test Failed:", error.message);
+        console.error("Test failed:", error.message);
+        process.exit(1);
     }
-}
+};
 
-testBidDecision();
+testGemini();

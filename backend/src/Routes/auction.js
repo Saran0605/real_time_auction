@@ -1,11 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const fs = require('fs');
-const path = require('path');
-const multer = require('multer');
-const { createAuction, getAllAuctions, goAuction } = require('../Controller/auction');
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import multer from 'multer';
+import { createAuction, getAllAuctions, goAuction } from '../Controller/auction.js';
 
-// Ensure uploads directory exists
+const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const uploadsDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
@@ -75,4 +78,4 @@ router.post('/joinNow', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

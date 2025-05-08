@@ -29,6 +29,12 @@ const AuctionList = () => {
     return new Date(dateString).toLocaleDateString('en-IN');
   };
 
+  const isActiveAuction = (startDate) => {
+    const today = new Date();
+    const auctionStartDate = new Date(startDate);
+    return auctionStartDate <= today;
+  };
+
   const filteredAuctions = auctions.filter(auction =>
     (auction.name || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -82,9 +88,9 @@ const AuctionList = () => {
             </div>
           </div>
 
-          <div className="row justify-content-center">
+          <div className="row row-cols-1 row-cols-md-2 justify-content-center">
             {filteredAuctions.map((auction, index) => (
-              <div key={index} className="col-12 col-lg-8 mb-4">
+              <div key={index} className="col mb-4">
                 <div className="card border-0 shadow-lg auction-card">
                   {/* Show image if available */}
                   {auction.imageUrl && (
@@ -98,16 +104,11 @@ const AuctionList = () => {
                   <div className="card-body p-4">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <h4 className="card-title text-primary mb-0">{auction.name}</h4>
-                      <span className="badge bg-success">{auction.status || 'Active'}</span>
+                      <span className={`badge ${isActiveAuction(auction.startDate) ? 'bg-success' : 'bg-danger'}`}>
+                        {isActiveAuction(auction.startDate) ? 'Active' : 'Inactive'}
+                      </span>
                     </div>
                     <div className="card-text">
-                      {/* Description field */}
-                      {auction.description && (
-                        <div className="mb-2">
-                          <strong>Description:</strong>
-                          <div>{auction.description}</div>
-                        </div>
-                      )}
                       <div className="info-row py-2 border-bottom">
                         <i className="bi bi-clock-fill text-warning me-2"></i>
                         <span className="text-muted">Timing:</span>
@@ -129,10 +130,14 @@ const AuctionList = () => {
                         <span className="ms-auto fw-bold">{auction.participants}</span>
                       </div>
                       <div className="info-row py-2">
+                        <i className="bi bi-people-fill text-danger me-2"></i>
+                        <span className="text-muted">Description:</span>
+                        <span className="ms-auto fw-bold">{auction.description}</span>
+                      </div>
+                      <div className="info-row py-2">
                         <button
                           className="btn btn-outline-info btn-sm"
-                          onClick={() => openProductList(auction.productList)}
-                        >
+                          onClick={() => openProductList(auction.productList)}>
                           <i className="bi bi-box-seam me-2"></i>
                           View Products
                         </button>
@@ -208,7 +213,7 @@ const AuctionList = () => {
                       </div>
                       <div className="form-group mb-2">
                         <label>Do you agree to pay processing fee later?</label>
-                        <select name="agreement" required>
+                        <select name="agreement" className="form-control" required>
                           <option value="">-- Select --</option>
                           <option value="Yes">Yes</option>
                           <option value="No">No</option>

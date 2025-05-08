@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 mongoose.set('debug', true);
 
 const DATABASE_NAME = 'rabin';

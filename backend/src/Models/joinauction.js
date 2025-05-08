@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const joinAuctionSchema = new mongoose.Schema({
   secretToken: String,
@@ -13,6 +13,6 @@ const joinAuctionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const joinAuction = mongoose.model('joinAuction', joinAuctionSchema); 
+const joinAuction = mongoose.model('joinAuction', joinAuctionSchema);
 
-module.exports = joinAuction;
+export default joinAuction;

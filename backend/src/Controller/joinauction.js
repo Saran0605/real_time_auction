@@ -1,6 +1,6 @@
-const joinAuction = require('../models/joinauction');
+import joinAuction from '../models/joinauction.js';
 
-async function participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription) {
+export async function participateAuction(secretToken, participantName, place, phoneNo, agreement, auctionName, auctionId, auctionDescription) {
     const newJoin = await joinAuction.create({
         secretToken,
         participantName,
@@ -9,15 +9,17 @@ async function participateAuction(secretToken, participantName, place, phoneNo, 
         agreement,
         auctionName,
         auctionId,
-        auctionDescription // <-- Store description
+        auctionDescription
     });
 
     return newJoin;
 }
 
-async function getJoinedAuctions() {
+export async function getJoinedAuctions(email) {
     try {
-        const auctions = await joinAuction.find({});
+        // If email is provided, filter by email (or participantName, etc. as needed)
+        const filter = email ? { participantName: email } : {};
+        const auctions = await joinAuction.find(filter);
         console.log("Fetched joined auctions:", auctions);
         return auctions;
     } catch (error) {
@@ -25,9 +27,3 @@ async function getJoinedAuctions() {
         throw new Error('Failed to fetch joined auctions');
     }
 }
-
-
-module.exports = {
-    participateAuction,
-    getJoinedAuctions
-};

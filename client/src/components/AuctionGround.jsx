@@ -7,14 +7,17 @@ function AuctionGround() {
     const location = useLocation();
     const { auctionName, auctionDescription, productList: stateProductList } = location.state || {};
 
-    const [productList, setProductList] = useState(stateProductList || '');
-    const [currentBid, setCurrentBid] = useState(100000);
+    //const [productList, setProductList] = useState(stateProductList || '');
+    const [currentBid, setCurrentBid] = useState(() => {
+        const savedBid = localStorage.getItem('currentBid');
+        return savedBid ? parseInt(savedBid, 10) : 100000;
+    });
     const [lastBidder, setLastBidder] = useState("User123");
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [bidHistory, setBidHistory] = useState([
-        { bidder: "User456", amount: 95000, time: "2 mins ago" },
-        { bidder: "User789", amount: 90000, time: "5 mins ago" }
-    ]);
+    const [bidHistory, setBidHistory] = useState(() => {
+        const savedHistory = JSON.parse(localStorage.getItem('bidHistory')) || [];
+        return savedHistory;
+    });
 
     const images = [
         "https://picsum.photos/800/400?random=1",
@@ -22,14 +25,60 @@ function AuctionGround() {
         "https://picsum.photos/800/400?random=3"
     ];
 
+    useEffect(() => {
+        localStorage.setItem('currentBid', currentBid.toString());
+    }, [currentBid]);
+
+    useEffect(() => {
+        // If productList is not available from state, fetch from backend using auctionName
+        if ((!stateProductList || stateProductList.trim() === '') && auctionName) {
+            fetch(`http://localhost:5004/auction/byName/${encodeURIComponent(auctionName)}`)
+                .then(res => res.json())
+                /* .then(data => {
+                    if (data && data.productList) {
+                        setProductList(data.productList);
+                    }
+                }) */
+                .catch(err => {
+                    console.error('Failed to fetch product list:', err);
+                });
+        }
+    }, [auctionName, stateProductList]);
+
+    const updateBidHistoryInCache = (newBid, bidder) => {
+        // Retrieve the existing bid history from localStorage
+        let storedBids = JSON.parse(localStorage.getItem('bidHistory')) || [];
+
+        // Add the new bid to the array
+        const newBidHistory = [
+            { bidder: bidder, amount: newBid, time: "Just now" },
+            ...storedBids
+        ];
+
+        // If there are more than 5 bids, remove the oldest one
+        if (newBidHistory.length > 5) {
+            newBidHistory.pop();
+        }
+
+        // Save the updated bid history back to localStorage
+        localStorage.setItem('bidHistory', JSON.stringify(newBidHistory));
+
+        // Update the state with the new bid history
+        setBidHistory(newBidHistory);
+    };
+
     const handleBid = (amount) => {
         const newBid = currentBid + amount;
         setCurrentBid(newBid);
-        setBidHistory([
-            { bidder: "You", amount: newBid, time: "Just now" },
-            ...bidHistory
-        ]);
+        updateBidHistoryInCache(newBid, "You");
         setLastBidder("You");
+    };
+
+    const resetBids = () => {
+        setCurrentBid(100000);  // Reset the bid value
+        localStorage.setItem('currentBid', "100000"); // Reset in localStorage
+        localStorage.removeItem('bidHistory');  // Remove bid history from localStorage
+        setBidHistory([]);  // Reset the bid history state
     };
 
     // Add a function to get Gemini suggestion from backend
@@ -47,23 +96,6 @@ function AuctionGround() {
         }
     };
 
-    useEffect(() => {
-        // If productList is not available from state, fetch from backend using auctionName
-        if ((!stateProductList || stateProductList.trim() === '') && auctionName) {
-            fetch(`http://localhost:5004/auction/byName/${encodeURIComponent(auctionName)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.productList) {
-                        setProductList(data.productList);
-                    }
-                })
-                .catch(err => {
-                    console.error('Failed to fetch product list:', err);
-                });
-        }
-    }, [auctionName, stateProductList]);
-
-    // Call Gemini suggestion when component mounts or when relevant data changes
     useEffect(() => {
         if (auctionName && auctionDescription && currentBid) {
             getGeminiSuggestion(auctionName, currentBid, auctionDescription);
@@ -86,17 +118,7 @@ function AuctionGround() {
                                         <div>{auctionDescription}</div>
                                     </div>
                                 )}
-                                <div>
-                                    <strong>Product List:</strong>
-                                    <ul className="mb-2">
-                                        {productList && productList.trim() !== ''
-                                            ? productList.split(',').map((prod, idx) => (
-                                                <li key={idx}>{prod.trim()}</li>
-                                            ))
-                                            : <li>No products available</li>
-                                        }
-                                    </ul>
-                                </div>
+                                
                             </div>
                             <h3>Current Bid</h3>
                             <div className="current-bid">₹{currentBid.toLocaleString()}</div>
@@ -125,14 +147,14 @@ function AuctionGround() {
                         <div className="image-slider mb-4">
                             <img src={images[currentImageIndex]} alt="Product" className="main-image" />
                             <div className="image-controls">
-                                <button 
-                                    className="slider-btn" 
+                                <button
+                                    className="slider-btn"
                                     onClick={() => setCurrentImageIndex((prev) => prev > 0 ? prev - 1 : images.length - 1)}
                                 >
                                     ‹
                                 </button>
-                                <button 
-                                    className="slider-btn" 
+                                <button
+                                    className="slider-btn"
                                     onClick={() => setCurrentImageIndex((prev) => (prev + 1) % images.length)}
                                 >
                                     ›
@@ -153,6 +175,13 @@ function AuctionGround() {
                             <button className="bid-btn btn-large" onClick={() => handleBid(75000)}>
                                 +75K
                                 <span className="btn-effect"></span>
+                            </button>
+                        </div>
+
+                        {/* Reset Button */}
+                        <div className="reset-btn-container">
+                            <button className="btn btn-danger" onClick={resetBids}>
+                                Reset Bids
                             </button>
                         </div>
                     </div>

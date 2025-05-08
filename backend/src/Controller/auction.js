@@ -1,7 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const Auction = require('../Models/auction');
-const multer = require('multer'); // ✅ Import multer
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import Auction from '../Models/auction.js';
+import multer from 'multer';
+
+// Fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, '../../public/uploads');
@@ -23,7 +28,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Auction creation function
-async function createAuction(auctionName, auctionTiming, entryAmount, startDate, time, participants, productList, image, description) {
+export async function createAuction(auctionName, auctionTiming, entryAmount, startDate, time, participants, productList, image, description) {
     // Store only the filename for the image
     const imageUrl = image ? image.filename : null;
     const newAuction = await Auction.create({
@@ -51,7 +56,7 @@ async function createAuction(auctionName, auctionTiming, entryAmount, startDate,
 }
 
 // Fetch all auctions
-async function getAllAuctions() {
+export async function getAllAuctions() {
     try {
         const auctions = await Auction.find({});
         return auctions;
@@ -62,7 +67,7 @@ async function getAllAuctions() {
 }
 
 // Auction joining functionality
-async function goAuction(secretToken) {
+export async function goAuction(secretToken) {
     const newAuction = await Auction.create({
         secretToken
     });
@@ -71,10 +76,5 @@ async function goAuction(secretToken) {
     };
 }
 
-// Export the functions
-module.exports = {
-    createAuction,
-    getAllAuctions,
-    goAuction,
-    upload // Export the multer instance for use in routes
-};
+// Export the multer instance for use in routes
+export { upload };
