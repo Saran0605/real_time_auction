@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import { createAuction, getAllAuctions, goAuction } from '../Controller/auction.js';
+import FinalBid from '../models/finalbid.js';  // Create this model file
 
 const router = express.Router();
 
@@ -75,6 +76,26 @@ router.post('/joinNow', async (req, res) => {
     } catch (error) {
         console.error("Error adding auction:", error);
         res.status(500).send({ error: 'Failed to join auction' });
+    }
+});
+
+router.post('/finalBid', async (req, res) => {
+    try {
+        const { auctionId, bidderName, finalAmount, auctionName } = req.body;
+        
+        const finalBid = new FinalBid({
+            auctionId,
+            bidderName,
+            finalAmount,
+            auctionName,
+            timestamp: new Date()
+        });
+
+        await finalBid.save();
+        res.json({ success: true, message: 'Final bid stored successfully' });
+    } catch (error) {
+        console.error('Error storing final bid:', error);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 

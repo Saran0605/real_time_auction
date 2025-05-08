@@ -117,6 +117,29 @@ function AuctionGround() {
         return () => clearInterval(timer);
     }, [timeLeft]);
 
+    // Add final bid storage effect
+    useEffect(() => {
+        if (timeLeft === 0) {
+            // Store final bid when timer ends
+            fetch('http://localhost:5004/auction/finalBid', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    auctionId: location.state?.auctionData?._id,
+                    bidderName: lastBidder,
+                    finalAmount: currentBid,
+                    auctionName: auctionName
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Final bid stored:', data);
+                alert(`Auction ended! Final bid: ₹${currentBid} by ${lastBidder}`);
+            })
+            .catch(err => console.error('Error storing final bid:', err));
+        }
+    }, [timeLeft, currentBid, lastBidder, auctionName, location.state]);
+
     // Add format time function
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
