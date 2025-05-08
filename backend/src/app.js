@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './Routes/auth.js';
+import auctionRoute from './Routes/auction.js';
 
 const app = express();
 const port = 5004;
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api', auctionRoute);
 
 app.use(express.urlencoded({extended:true}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

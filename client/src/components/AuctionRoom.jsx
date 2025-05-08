@@ -21,22 +21,26 @@ function AuctionRoom() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch('http://localhost:5004/joinauction/joinAuction', {  // Update endpoint
+        fetch('http://localhost:5004/auction/joinNow', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                secretToken,
-                // Add any other required fields from selectedAuction if needed
-                ...(selectedAuction || {})
-            })
+            body: JSON.stringify({ secretToken })
         })
             .then(res => res.json())
             .then(data => {
-                if (data.message === 'Successfully joined auction') {
-                    navigate('/auctionRoom');  // Use navigate instead of window.location
+                setShowModal(false);
+                setSecretToken('');
+                // Navigate to AuctionGround with auctionName and auctionDescription
+                if (selectedAuction) {
+                    navigate('/auctionGround', {
+                        state: {
+                            auctionName: selectedAuction.name || selectedAuction.auctionName,
+                            auctionDescription: selectedAuction.description || selectedAuction.auctionDescription,
+                            secretToken
+                        }
+                    });
                 } else {
-                    setShowModal(false);
-                    setSecretToken('');
+                    navigate('/auctionGround', { state: { secretToken } });
                 }
             })
             .catch(err => {

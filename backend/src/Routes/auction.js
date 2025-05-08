@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import multer from 'multer';
 import { createAuction, getAllAuctions, goAuction } from '../Controller/auction.js';
 import FinalBid from '../models/finalbid.js';  // Create this model file
+import { shouldPlaceBid } from '../../services/geminiService.js'
 
 const router = express.Router();
 
@@ -96,6 +97,17 @@ router.post('/finalBid', async (req, res) => {
     } catch (error) {
         console.error('Error storing final bid:', error);
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+// POST route to get Gemini AI suggestion
+router.post('/gemini/suggest', async (req, res) => {
+    const { name, betValue, description } = req.body;
+    try {
+        const suggestion = await shouldPlaceBid(name, betValue, description);
+        res.json({ suggestion });
+    } catch (error) {
+        console.error("Gemini Suggestion Error:", error);
+        res.status(500).json({ error: "Failed to get Gemini suggestion" });
     }
 });
 

@@ -166,3 +166,43 @@
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255,255,255,0.4);
 }
+.chat-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.chat-window {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
+    color: black;
+}
+
+.chat-message.user {
+    background-color: #e0f7fa;
+    align-self: flex-end;
+    text-align: right;
+    margin-left: auto;
+}
+
+.chat-message.bot {
+    background-color: #f1f1f1;
+    align-self: flex-start;
+    text-align: left;
+    margin-right: auto;
+}
